@@ -326,7 +326,10 @@
         // value could be self. That would produce a retain cycle self->invocations->anInvocation->self.
         // However we need to retain everything on anInvocation that isn't self because we expect them to
         // stick around after this method returns. Use our special method to retain just what's needed.
-        [anInvocation retainObjectArgumentsExcludingObject:self];
+        // NOTE(stkr): unfortunately, we also can't retain any of the other
+        // arguments, because those might be calling us from their dealloc for
+        // instance, when unregistering as a listener
+        // [anInvocation retainObjectArgumentsExcludingObject:self];
         [invocations addObject:anInvocation];
     }
 
